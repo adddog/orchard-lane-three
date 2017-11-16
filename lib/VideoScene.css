@@ -1,0 +1,17 @@
+.root {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: move;
+    cursor: grab;
+}
+
+.root:active {
+    cursor: grabbing;
+}
+
+.hoveringItem {
+    cursor: pointer;
+}

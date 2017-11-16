@@ -1,0 +1,1 @@
+`gsutil cors set gcloud/cors-bucket gs://orchard-lane`
