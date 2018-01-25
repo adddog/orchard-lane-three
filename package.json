@@ -1,7 +1,7 @@
 {
   "name": "orchard-lane-three",
   "version": "0.0.20",
-  "main": "index.js",
+  "main": "dist/orchard-lane-three.js",
   "license": "MIT",
   "homepage": "https://github.com/samradical/orchard-lane-three",
   "author": "Sam Elie <samradelie@gmail.com>",
@@ -34,7 +34,9 @@
     "babel-preset-stage-1": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1"
   },
-  "scripts": {},
+  "scripts": {
+    "build": "browserify -e index.js -t [ envify --NODE_ENV production ] -t babelify --presets [ es2015 stage-0 stage-1 ] -s orchard-lane-three -o dist/orchard-lane-three.js"
+  },
   "bugs": {
     "url": "https://github.com/samradical/orchard-lane-three/issues"
   },
