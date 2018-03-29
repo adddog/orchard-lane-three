@@ -156,7 +156,7 @@ var VideoScene = (_class = function () {
     }, {
         key: "updateConfig",
         value: function updateConfig(config) {
-            this.store.dispatch((0, _configurationActions.setInitialConfig)(config));
+            this.store.dispatch((0, _configurationActions.updateConfig)(config));
         }
     }, {
         key: "setHandlers",
@@ -903,7 +903,7 @@ exports.default = Heading;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.setInitialConfig = undefined;
+exports.updateConfig = exports.setInitialConfig = undefined;
 
 var _actionTypes = require("../constants/actionTypes");
 
@@ -915,6 +915,13 @@ var setInitialConfig = exports.setInitialConfig = function setInitialConfig(conf
     return {
         configuration: configuration,
         type: ActionTypes.SET_INITIAL_CONFIG
+    };
+};
+
+var updateConfig = exports.updateConfig = function updateConfig(configuration) {
+    return {
+        configuration: configuration,
+        type: ActionTypes.UPDATE_CONFIG
     };
 };
 
@@ -962,6 +969,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 //configuration
 var SET_INITIAL_CONFIG = exports.SET_INITIAL_CONFIG = "SET_INITIAL_CONFIG";
+var UPDATE_CONFIG = exports.UPDATE_CONFIG = "UPDATE_CONFIG";
 
 //scene
 var SET_CAMERA = exports.SET_CAMERA = "SET_CAMERA";
@@ -1022,20 +1030,27 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 exports.default = function () {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultOptions;
     var action = arguments[1];
 
     switch (action.type) {
         case ActionTypes.SET_INITIAL_CONFIG:
-            console.log(action);
-            if (typeof action.configuration.initialRotation === "number") {
-                action.configuration.initialRotation = {
-                    lon: action.configuration.initialRotation,
-                    lat: 0
-                };
+            {
+                if (typeof action.configuration.initialRotation === "number") {
+                    action.configuration.initialRotation = {
+                        lon: action.configuration.initialRotation,
+                        lat: 0
+                    };
+                }
+                return (0, _lodash.defaults)((0, _lodash.omitBy)(action.configuration, _lodash.isNil), defaultOptions);
             }
-            return (0, _lodash.defaults)((0, _lodash.omitBy)(action.configuration, _lodash.isNil), defaultOptions);
+        case ActionTypes.UPDATE_CONFIG:
+            {
+                return _extends({}, state, action.configuration);
+            }
         default:
             return state;
     }
@@ -1054,7 +1069,8 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 var defaultOptions = {
     designMode: false,
     fps: _constants.FPS,
-    hotspotFont: "RobotoCondensed-Bold",
+    fontJSON: null,
+    hotspotFont: "Asap_Regular",
     hotspots: [],
     initialRotation: { lat: 0, lon: 0 },
     cameraPosition: { x: 0, y: 10, z: 0 },
@@ -1886,9 +1902,8 @@ var HotspotModel = (_class = function (_BaseModel) {
             var hotspotContainer = this.createContainer();
 
             object3D.add(hotspotContainer);
-
             // const font = new Font(hotspotFont);
-            var font = new _three.Font();
+            var font = new _three.Font(this.config.fontJSON);
 
             //title text
             var textContainer = this.createTitleTextGeo(font);
@@ -1974,6 +1989,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = undefined;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -2095,7 +2112,9 @@ var Hotspots = (_class = function (_BaseModel) {
             this.hotspots = this.configurationStore.hotspots.filter(function (h) {
                 return h.hotspotType !== "invisible";
             }).map(function (hotspotData) {
-                var hotspot = new _Hotspot2.default(hotspotData);
+                var hotspot = new _Hotspot2.default(_extends({}, hotspotData, {
+                    fontJSON: _this3.configurationStore.fontJSON
+                }));
                 _this3.addChild(hotspot, _this3.hotspotGroup);
                 return hotspot;
             });
