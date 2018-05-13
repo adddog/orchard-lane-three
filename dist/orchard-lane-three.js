@@ -238,7 +238,6 @@ var VideoScene = (_class = function () {
                 this.baseContainer.setContext(context);
                 this.hotspots.setContext(context);
                 if (!this.config.hide) {
-
                     this.videoBackdrop = new _VideoBackdrop2.default({
                         videoEl: this.videoEl
                     });
